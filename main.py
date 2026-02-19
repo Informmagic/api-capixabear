@@ -41,3 +41,9 @@ def get_spot(spot_id: int):
     # Tradução: "Na tabela spots, selecione tudo onde o id seja igual ao spot_id"
     query = supabase.table("spots").select("*").eq("id", spot_id).single().execute()
     return query.data
+
+# Nova rota para buscar histórias e personalidades
+@app.get("/articles")
+def get_articles():
+    response = supabase.table("articles").select("*").execute()
+    return response.data
