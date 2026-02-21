@@ -42,8 +42,13 @@ def get_spot(spot_id: int):
     query = supabase.table("spots").select("*").eq("id", spot_id).single().execute()
     return query.data
 
-# Nova rota para buscar histórias e personalidades
-@app.get("/articles")
-def get_articles():
-    response = supabase.table("articles").select("*").execute()
-    return response.data
+# Rota para buscar os eventos da Agenda
+@app.get("/eventos")
+def get_eventos():
+    try:
+        # Busca todos os registros da tabela 'eventos' no Supabase
+        response = supabase.table("eventos").select("*").execute()
+        return response.data
+    except Exception as e:
+        # Se der erro (ex: tabela não existe), avisa sem derrubar o servidor
+        return {"error": str(e)}
