@@ -26,6 +26,15 @@ class TouristSpot(BaseModel):
     latitude: float
     longitude: float
 
+class NovoUsuario(BaseModel):
+    nome: str
+    email: str
+    senha: str
+
+class LoginUsuario(BaseModel):
+    email: str
+    senha: str
+
 # --- 3. AS ROTAS DA API ---
 
 # Rota para listar todos os pontos turísticos
@@ -69,3 +78,34 @@ def get_parceiros():
         return response.data
     except Exception as e:
         return {"error": str(e)}
+    
+# --- ROTA DE CADASTRO ---
+@app.post("/cadastro")
+def cadastrar_usuario(usuario: NovoUsuario):
+    try:
+        dados = {
+            "nome": usuario.nome,
+            "email": usuario.email,
+            "senha": usuario.senha
+        }
+        # Insere o usuário na tabela
+        response = supabase.table("usuarios").insert(dados).execute()
+        return {"sucesso": True, "mensagem": "Professor cadastrado com sucesso!"}
+    except Exception as e:
+        return {"sucesso": False, "erro": str(e)}
+
+# --- ROTA DE LOGIN ---
+@app.post("/login")
+def fazer_login(usuario: LoginUsuario):
+    try:
+        # Busca na tabela se existe essa combinação de email e senha
+        response = supabase.table("usuarios").select("*").eq("email", usuario.email).eq("senha", usuario.senha).execute()
+        
+        if len(response.data) > 0:
+            usuario_logado = response.data[0]
+            # Devolve o NOME do professor para o celular poder dizer "Olá, Bruno Coutinho!"
+            return {"sucesso": True, "nome": usuario_logado["nome"]}
+        else:
+            return {"sucesso": False, "mensagem": "E-mail ou senha incorretos."}
+    except Exception as e:
+        return {"sucesso": False, "erro": str(e)}
