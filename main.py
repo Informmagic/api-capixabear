@@ -52,3 +52,11 @@ def get_eventos():
     except Exception as e:
         # Se der erro (ex: tabela não existe), avisa sem derrubar o servidor
         return {"error": str(e)}
+
+@app.get("/historias")
+def get_historias():
+    try:
+        response = supabase.table("articles").select("*").execute()
+        return response.data
+    except Exception as e:
+        return {"error": str(e)}
