@@ -60,3 +60,12 @@ def get_historias():
         return response.data
     except Exception as e:
         return {"error": str(e)}
+    
+# Rota para buscar os Parceiros (Hotéis, Restaurantes, etc)
+@app.get("/parceiros")
+def get_parceiros():
+    try:
+        response = supabase.table("parceiros").select("*").execute()
+        return response.data
+    except Exception as e:
+        return {"error": str(e)}
